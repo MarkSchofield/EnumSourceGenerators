@@ -1,5 +1,8 @@
 ﻿namespace SourceGenerators;
 
+using System;
+using Enumeration;
+
 internal enum SimpleEnum
 {
     One,
@@ -14,19 +17,14 @@ internal enum ComplexEnum
     Four = 4,
 }
 
-internal static partial class Metadata
-{
-    internal static partial bool IsContiguous<TEnum>(this TEnum value) where TEnum : Enum;
-}
-
 internal static partial class Program
 {
     private static void Main(string[] arguments)
     {
         try
         {
-            Console.WriteLine($"SimpleEnum: {default(SimpleEnum).IsContiguous()}");
-            Console.WriteLine($"ComplexEnum: {default(ComplexEnum).IsContiguous()}");
+            Console.WriteLine($"IsValid(SimpleEnum.One) : {Metadata.IsValid(SimpleEnum.One)}");
+            Console.WriteLine($"IsValid((SimpleEnum)12) : {Metadata.IsValid((SimpleEnum)12)}");
         }
         catch (Exception ex)
         {

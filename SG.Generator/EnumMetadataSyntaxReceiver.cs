@@ -6,13 +6,21 @@
 
     internal class EnumMetadataSyntaxReceiver : ISyntaxReceiver
     {
-#pragma warning disable CA1823 // Avoid unused private fields
-        private List<SimpleNameSyntax> enumerations = new List<SimpleNameSyntax>();
-#pragma warning restore CA1823 // Avoid unused private fields
+        internal readonly List<ArgumentSyntax> enumerations = new();
 
         public void OnVisitSyntaxNode(SyntaxNode syntaxNode)
         {
-            // Business logic to decide what we're interested in goes here
+            // Collect all types passed to 'Metadata.IsValid(<>)'
+            if ((syntaxNode is InvocationExpressionSyntax invocationExpression) &&
+                (invocationExpression.Expression is MemberAccessExpressionSyntax memberAccess) &&
+                (memberAccess.Expression is IdentifierNameSyntax classIdentifier) &&
+                (classIdentifier.Identifier.Text == "Metadata"))
+            {
+                if (memberAccess.Name.Identifier.Text == "IsValid")
+                {
+                    this.enumerations.Add(invocationExpression.ArgumentList.Arguments[0]);
+                }
+            }
         }
     }
 }
