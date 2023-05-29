@@ -54,7 +54,7 @@
 
             methodBody = Block(ReturnStatement(SyntaxBuilder.LogicalOr(equalsExpressions)));
 
-            var parameter = Parameter(Identifier("value"))
+            ParameterSyntax parameter = Parameter(Identifier("value"))
                 .WithType(enumExpression)
                 .WithModifiers(ThisTokenList);
 
