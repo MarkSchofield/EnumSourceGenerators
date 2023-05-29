@@ -24,6 +24,10 @@
             Token(SyntaxKind.PartialKeyword)
         );
 
+        private static readonly SyntaxTokenList ThisTokenList = TokenList(
+            Token(SyntaxKind.ThisKeyword)
+        );
+
         private static MethodDeclarationSyntax BuildIsValid(ITypeSymbol typeSymbol)
         {
             if ((typeSymbol.TypeKind != TypeKind.Enum) || (typeSymbol is not INamedTypeSymbol namedTypeSymbol))
@@ -50,6 +54,10 @@
 
             methodBody = Block(ReturnStatement(SyntaxBuilder.LogicalOr(equalsExpressions)));
 
+            var parameter = Parameter(Identifier("value"))
+                .WithType(enumExpression)
+                .WithModifiers(ThisTokenList);
+
             return MethodDeclaration(
                 attributeLists: default,
                 modifiers: InternalStaticTokenList,
@@ -58,7 +66,7 @@
                 identifier: Identifier("IsValid"),
                 typeParameterList: default,
                 parameterList: ParameterList(
-                        SeparatedList(new[] { Parameter(Identifier("value")).WithType(enumExpression) })
+                        SeparatedList(new[] { parameter })
                         ),
                 constraintClauses: default,
                 body: methodBody,
@@ -76,12 +84,12 @@
 
             // Build a HashSet of all of the TypeInfo's the need metadata emitting.
             HashSet<TypeInfo> enumerationTypeInfos = new();
-            foreach ((SyntaxTree syntaxTree, IEnumerable<ArgumentSyntax> enumerations) in syntaxReceiver.enumerations.GroupBy(argumentSyntax => argumentSyntax.SyntaxTree))
+            foreach ((SyntaxTree syntaxTree, IEnumerable<ExpressionSyntax> enumerations) in syntaxReceiver.enumerations.GroupBy(argumentSyntax => argumentSyntax.SyntaxTree))
             {
                 SemanticModel semanticModel = context.Compilation.GetSemanticModel(syntaxTree);
-                foreach (ArgumentSyntax enumeration in enumerations)
+                foreach (ExpressionSyntax enumeration in enumerations)
                 {
-                    enumerationTypeInfos.Add(semanticModel.GetTypeInfo(enumeration.Expression, context.CancellationToken));
+                    enumerationTypeInfos.Add(semanticModel.GetTypeInfo(enumeration, context.CancellationToken));
                 }
             }
 
@@ -94,7 +102,7 @@
                 typedIsValidMethods.Add(isValidMethod);
             }
 
-            ClassDeclarationSyntax classDeclaration = ClassDeclaration("Metadata")
+            ClassDeclarationSyntax classDeclaration = ClassDeclaration("MetadataGenerated")
                 .WithModifiers(InternalStaticPartialTokenList)
                 .WithMembers(List<MemberDeclarationSyntax>(typedIsValidMethods))
                 ;

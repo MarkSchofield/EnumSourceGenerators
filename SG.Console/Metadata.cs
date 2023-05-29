@@ -1,8 +1,8 @@
 ﻿namespace Enumeration;
 
-internal static partial class Metadata
+internal static class Metadata
 {
-    internal static bool IsValid(object value)
+    internal static bool IsValid<TEnum>(this TEnum value) where TEnum : Enum
     {
         throw new NotImplementedException();
     }

@@ -23,8 +23,8 @@ internal static partial class Program
     {
         try
         {
-            Console.WriteLine($"IsValid(SimpleEnum.One) : {Metadata.IsValid(SimpleEnum.One)}");
-            Console.WriteLine($"IsValid((SimpleEnum)12) : {Metadata.IsValid((SimpleEnum)12)}");
+            Console.WriteLine($"IsValid(SimpleEnum.One) : {SimpleEnum.One.IsValid()}");
+            Console.WriteLine($"IsValid((SimpleEnum)12) : {((SimpleEnum)12).IsValid()}");
         }
         catch (Exception ex)
         {
