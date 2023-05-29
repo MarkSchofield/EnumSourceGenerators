@@ -70,6 +70,7 @@
                         ),
                 constraintClauses: default,
                 body: methodBody,
+                expressionBody: default,
                 semicolonToken: default);
         }
 
